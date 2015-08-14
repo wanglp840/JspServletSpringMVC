@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+       <!--定义映射-->
+       <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+              <!--转发处理器-->
+              <property name="mappings">
+                      <props>
+                             <prop key="Login.do">loginController</prop>
+                             <prop key="Course.do">CourseController</prop>
+                      </props>
+               </property>
+              <!--定义拦截器-->
+              <property name="interceptors">
+                      <list>
+                             <ref bean ="FirstInterceptor"></ref>
+                      </list>
+              </property>
+       </bean>
+
+
+
+
+       <!--定义视图以及路径-->
+       <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+              <property name="viewClass" value="org.springframework.web.servlet.view.InternalResourceView"/>
+              <property name="prefix" value="/WEB-INF/views/"/>
+              <property name="suffix" value=".jsp"/>
+       </bean>
+
+
+
+
+       <!--定义控制器 多动作参数-->
+       <bean id="loginController" class="controller.login.LoginController">
+               <property name="methodNameResolver">
+                      <ref bean="paramMethodResolver"/>
+               </property>
+       </bean>
+       <bean id="paramMethodResolver" class="org.springframework.web.servlet.mvc.multiaction.ParameterMethodNameResolver">
+              <property name="paramName">
+                     <value>action</value>
+              </property>
+       </bean>
+       <bean id="CourseController" class="controller.vip.UserInfoController">
+              <property name="methodNameResolver">
+                     <ref bean="paramMethodResolver2"/>
+              </property>
+       </bean>
+       <bean id="paramMethodResolver2" class="org.springframework.web.servlet.mvc.multiaction.ParameterMethodNameResolver">
+              <property name="paramName">
+                     <value>method</value>
+              </property>
+       </bean>
+
+
+
+
+       <!--定义异常处理页面-->
+       <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+              <property name="exceptionMappings">
+                     <props>
+                            <prop key="java.sql.SQLException">500</prop>
+                     </props>
+              </property>
+       </bean>
+
+
+
+
+       <!--定义实体bean  拦截器-->
+       <bean id="FirstInterceptor" class="interceptor.FirstInterceptor"/>
+</beans>
